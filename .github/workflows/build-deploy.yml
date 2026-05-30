@@ -1,0 +1,49 @@
+name: Build & Deploy React Editor
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - develop
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build for production
+        run: npm run build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: website-builder-bundle
+          path: |
+            ../crm.terralegion.com/assets/website-builder/app.js
+            ../crm.terralegion.com/assets/website-builder/styles.css
+          retention-days: 30
+
+      # Optional: Deploy to server via SCP
+      # Uncomment and configure if you have SSH credentials in GitHub secrets
+      # - name: Deploy to CRM server
+      #   uses: appleboy/scp-action@master
+      #   with:
+      #     host: ${{ secrets.CRM_HOST }}
+      #     username: ${{ secrets.CRM_USERNAME }}
+      #     key: ${{ secrets.CRM_SSH_KEY }}
+      #     source: "../crm.terralegion.com/assets/website-builder/app.js,../crm.terralegion.com/assets/website-builder/styles.css"
+      #     target: "/path/to/crm/assets/website-builder/"
