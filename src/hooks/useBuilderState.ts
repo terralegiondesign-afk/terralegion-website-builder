@@ -80,9 +80,9 @@ export const useBuilderState = () => {
       const json = await response.json();
       if (json.success && json.website) {
         setDraft(json.website.draft || json.website.website_json);
-        setStatus(json.website.deploymentStatus);
-        setIsLive(json.website.isLive);
-        setLastPublishedAt(json.website.lastPublishedAt);
+        setStatus(json.website.deployment_status || json.website.deploymentStatus);
+        setIsLive(json.website.is_live || json.website.isLive);
+        setLastPublishedAt(json.website.last_published_at || json.website.lastPublishedAt);
       }
     } catch (err) {
       console.error('Failed to refresh state:', err);
